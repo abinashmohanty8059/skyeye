@@ -127,6 +127,7 @@ export default function Recognition() {
     const update = () => {
       frame = 0
       if (!pinned()) {
+        stage.style.setProperty('--pos', '0')
         stage.style.setProperty('--index', '0')
         root.classList.remove('rec-snapping')
         setActive(0)
@@ -134,9 +135,13 @@ export default function Recognition() {
       }
       const rect = section.getBoundingClientRect()
       const step = (rect.height - window.innerHeight) / last
-      const index = step > 0
-        ? Math.min(Math.max(Math.round(-rect.top / step), 0), last)
+      // Two readings of the same scroll: a continuous one the centre names glide
+      // along, and a rounded one the photographs cut on.
+      const progress = step > 0
+        ? Math.min(Math.max(-rect.top / step, 0), last)
         : 0
+      const index = Math.round(progress)
+      stage.style.setProperty('--pos', progress.toFixed(4))
       stage.style.setProperty('--index', String(index))
       setActive(index)
 

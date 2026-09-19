@@ -2074,6 +2074,7 @@ img { display: block; max-width: 100%; }
 }
 
 .rec-stage {
+  --pos: 0;
   --index: 0;
   display: flex;
   flex-direction: column;
@@ -2230,7 +2231,10 @@ img { display: block; max-width: 100%; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform: translateY(calc(var(--index, 0) * var(--item-h) * -1));
+    /* Follows the scroll continuously — including through a snap — so the names
+       glide up and down while the photographs cut. */
+    transform: translateY(calc(var(--pos, 0) * var(--item-h) * -1));
+    will-change: transform;
   }
 
   .rec-name {
@@ -2247,6 +2251,7 @@ img { display: block; max-width: 100%; }
     text-transform: uppercase;
     color: var(--color-primary);
     opacity: 0.12;
+    transition: opacity 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .rec-name.is-active {
@@ -2266,6 +2271,14 @@ img { display: block; max-width: 100%; }
   .rec-name,
   .rec-names-track {
     transition: none;
+  }
+}
+
+/* Keyboard and scrollbar users land between steps; give the names a little
+   easing there too rather than tracking every pixel of a drag. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .rec-names-track {
+    transition: transform 120ms linear;
   }
 }
 
@@ -2481,4 +2494,205 @@ img { display: block; max-width: 100%; }
 
 @media (prefers-reduced-motion: reduce) {
   .vh-cue .material-symbols-outlined { animation: none; }
+}
+
+/* ============================================
+   SECTION: IMAGE MORPH GALLERY (GSAP)
+   Scatter -> line -> circle formation, then a
+   scroll-scrubbed rotation of the whole ring.
+   ============================================ */
+.morph-page-container {
+  position: relative;
+  width: 100%;
+  min-height: 130vh;
+  background-color: var(--color-primary);
+  overflow-x: hidden;
+}
+
+.morph-viewport {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 90px var(--margin) 0;
+}
+
+@media (min-width: 1024px) {
+  .morph-viewport {
+    padding-left: var(--margin-desktop);
+    padding-right: var(--margin-desktop);
+  }
+}
+
+.morph-text-col {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38%;
+  min-width: 260px;
+  z-index: 50;
+}
+
+.morph-text-overlay {
+  position: relative;
+  z-index: 50;
+  text-align: left;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.morph-text-overlay .section-label {
+  margin-bottom: var(--space-md);
+}
+
+.morph-text-overlay h2 {
+  font-size: clamp(28px, 3.4vw, 48px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--color-on-primary);
+  margin-bottom: var(--space-md);
+}
+
+.morph-text-overlay p {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-on-primary-container);
+}
+
+.morph-text-overlay--explore {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.morph-visual-col {
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.morph-cards-inner-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  height: 0;
+  z-index: 2;
+}
+
+.morph-card-wrap {
+  position: absolute;
+  width: clamp(78px, 9vw, 112px);
+  height: clamp(108px, 12.5vw, 152px);
+  perspective: 1000px;
+}
+
+@media (max-width: 767px) {
+  .morph-card-wrap {
+    width: clamp(50px, 13vw, 68px);
+    height: clamp(70px, 18vw, 94px);
+  }
+}
+
+.morph-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+@media (pointer: fine) {
+  .morph-card-wrap:hover .morph-card-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+.morph-card-front,
+.morph-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-primary-container);
+}
+
+.morph-card-front {
+  background-color: var(--color-primary-container);
+}
+
+.morph-card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.1) saturate(0.95);
+}
+
+.morph-card-back {
+  background-color: var(--color-primary-container);
+  color: var(--color-secondary);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: clamp(9px, 1.1vw, 12px);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+@media (max-width: 900px) {
+  .morph-page-container {
+    min-height: 115vh;
+  }
+
+  .morph-viewport {
+    flex-direction: column;
+    justify-content: center;
+    padding: 90px var(--margin) var(--margin);
+    gap: var(--space-sm);
+  }
+
+  .morph-text-col {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+
+  .morph-text-overlay {
+    text-align: center;
+  }
+
+  .morph-text-overlay--explore {
+    inset: 0;
+  }
+
+  .morph-visual-col {
+    flex: 1 1 auto;
+    width: 100%;
+  }
 }
