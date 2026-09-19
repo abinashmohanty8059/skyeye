@@ -2638,13 +2638,101 @@ section[id] {
 }
 
 .morph-text-overlay--explore {
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
   opacity: 0;
   transform: translateY(30px);
 }
 
+/* Opaque so it occludes whichever headline is showing underneath, giving a
+   clean cross-fade rather than two layers of text bleeding through. */
+.morph-preview {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-md);
+  background-color: var(--color-primary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition:
+    opacity 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0s linear 0.38s;
+}
+
+.morph-preview.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0s;
+}
+
+.morph-preview__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 46vh;
+  overflow: hidden;
+  border: 1px solid var(--color-primary-container);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary-container);
+}
+
+/* The one place colour appears in this section. */
+.morph-preview__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+  animation: morph-preview-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes morph-preview-in {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.morph-preview__index {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  padding: 2px 6px;
+  background-color: var(--color-secondary);
+  color: var(--color-on-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+.morph-preview__meta {
+  border-top: 1px solid var(--color-primary-container);
+  padding-top: var(--space-md);
+}
+
+.morph-preview__title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 26px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-on-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.morph-preview__desc {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-on-primary-container);
+}
+
+/* ---------- Right column: the ring ---------- */
 .morph-visual-col {
   position: relative;
   flex: 1 1 auto;
@@ -2665,11 +2753,33 @@ section[id] {
   z-index: 2;
 }
 
+/* Sits in the hole at the centre of the ring. Deliberately a sibling of the
+   cards wrapper, not a child, so the scroll-scrubbed rotation of the ring
+   leaves the mark upright. */
+.morph-ring-logo {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.morph-ring-logo img {
+  width: clamp(72px, 9vw, 124px);
+  height: auto;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .morph-ring-logo img { opacity: 1; }
+}
+
 .morph-card-wrap {
   position: absolute;
   width: clamp(78px, 9vw, 112px);
   height: clamp(108px, 12.5vw, 152px);
-  perspective: 1000px;
 }
 
 @media (max-width: 767px) {
@@ -2679,62 +2789,60 @@ section[id] {
   }
 }
 
+/* GSAP owns the transform on .morph-card-wrap, so every hover effect lives on
+   the inner element instead — otherwise the two would fight each frame. */
 .morph-card-inner {
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-  transform-style: preserve-3d;
-}
-
-@media (pointer: fine) {
-  .morph-card-wrap:hover .morph-card-inner {
-    transform: rotateY(180deg);
-  }
-}
-
-.morph-card-front,
-.morph-card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  border-radius: var(--radius-sm);
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-primary-container);
-}
-
-.morph-card-front {
   background-color: var(--color-primary-container);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.3s ease,
+    box-shadow 0.4s ease;
 }
 
-.morph-card-front img {
+/* The ring stays monochrome throughout — colour belongs to the preview panel
+   alone, so the eye is pulled to the left rather than to the cursor. */
+.morph-card-inner img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(1.1) saturate(0.95);
+  filter: grayscale(1) contrast(1.1);
+  transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
-.morph-card-back {
-  background-color: var(--color-primary-container);
-  color: var(--color-secondary);
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  font-family: var(--font-mono);
-  font-size: clamp(9px, 1.1vw, 12px);
-  font-weight: 500;
-  letter-spacing: 0.14em;
+/* Everything that is not under the cursor recedes while a preview is open. */
+.morph-cards-inner-wrap.is-focused .morph-card-inner img {
+  opacity: 0.28;
+  filter: grayscale(1) contrast(1.1);
+}
+
+@media (pointer: fine) {
+  .morph-card-wrap:hover {
+    z-index: 5;
+  }
+
+  .morph-card-wrap:hover .morph-card-inner {
+    transform: scale(1.22);
+    border-color: var(--color-secondary);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
+  }
+
+  /* The hovered frame comes back to full strength but stays monochrome. */
+  .morph-cards-inner-wrap.is-focused .morph-card-wrap:hover .morph-card-inner img {
+    opacity: 1;
+    filter: grayscale(1) contrast(1.15);
+  }
 }
 
 @media (max-width: 900px) {
   .morph-page-container {
-    min-height: 115vh;
+    min-height: 200vh;
   }
 
   .morph-viewport {
@@ -2744,17 +2852,28 @@ section[id] {
     gap: var(--space-sm);
   }
 
+  /* Back to normal flow: the headline sits above the ring rather than beside
+     it, and the preview panel is not used on touch. */
   .morph-text-col {
     width: 100%;
+    height: auto;
     flex: 0 0 auto;
   }
 
   .morph-text-overlay {
+    position: relative;
+    inset: auto;
+    align-items: center;
     text-align: center;
   }
 
   .morph-text-overlay--explore {
+    position: absolute;
     inset: 0;
+  }
+
+  .morph-preview {
+    display: none;
   }
 
   .morph-visual-col {
@@ -2762,43 +2881,3 @@ section[id] {
     width: 100%;
   }
 }
-/* Cover frame sits desaturated until the row is hovered, when the clip plays
-   in colour (see Technology.jsx). */
-.tech-thumb {
-  display: none;
-  position: relative;
-  width: 150px;
-  aspect-ratio: 16 / 9;
-  flex-shrink: 0;
-  overflow: hidden;
-  background-color: var(--color-surface-container-highest);
-  border: 1px solid var(--color-surface-container-highest);
-}
-
-@media (min-width: 640px) {
-  .tech-thumb { display: block; }
-}
-
-@media (min-width: 1024px) {
-  .tech-thumb { width: 190px; }
-}
-
-.tech-thumb video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(1);
-  transition: filter 320ms ease, transform 420ms ease;
-}
-
-.tech-item:hover .tech-thumb video {
-  filter: grayscale(0);
-  transform: scale(1.03);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tech-thumb video { transition: filter 120ms ease; }
-  .tech-item:hover .tech-thumb video { transform: none; }
-}
-
