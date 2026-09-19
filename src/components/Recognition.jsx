@@ -108,130 +108,59 @@ const groups = [
 export default function Recognition() {
   const sectionRef = useRef(null)
   const stageRef = useRef(null)
-  const slidesRef = useRef([])
-  const namesRef = useRef([])
   const [active, setActive] = useState(0)
 
+  // One scroll step per pair, switched sharply: the index comes from which step
+  // of the pinned section the scroll is in, and the pairs hard-cut between them.
   useEffect(() => {
     const section = sectionRef.current
     const stage = stageRef.current
     if (!section || !stage) return
 
     const last = groups.length - 1
+    const root = document.documentElement
     const pinned = () => window.matchMedia('(min-width: 900px)').matches
-    const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    // smoothstep: most of the crossfade happens mid-way between two pairs
-    const ease = t => t * t * (3 - 2 * t)
-    const clamp01 = v => (v < 0 ? 0 : v > 1 ? 1 : v)
-
-    let current = null
-    let target = 0
+    const canSnap = () =>
+      pinned() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let frame = 0
-    let flow = false
-
-    const readTarget = () => {
-      const rect = section.getBoundingClientRect()
-      const travel = rect.height - window.innerHeight
-      return clamp01(travel > 0 ? -rect.top / travel : 0) * last
-    }
-
-    const clearInline = () => {
-      for (const el of slidesRef.current) {
-        if (!el) continue
-        el.style.opacity = ''
-        el.style.transform = ''
-        el.style.pointerEvents = ''
-        el.style.zIndex = ''
-        el.style.removeProperty('--text-op')
-      }
-      for (const el of namesRef.current) {
-        if (el) el.style.opacity = ''
-      }
-    }
-
-    // Paint everything from one position value — no thresholds, no CSS transitions
-    // racing the scroll, so the pairs crossfade exactly as fast as the wheel turns.
-    const paint = pos => {
-      stage.style.setProperty('--pos', pos.toFixed(4))
-      // Dissolve, not a cross-fade: the outgoing pair stays fully opaque while the
-      // incoming one fades in on top of it, so the page never washes through between.
-      const from = Math.min(Math.max(Math.floor(pos), 0), last)
-      const to = Math.min(from + 1, last)
-      const t = ease(clamp01(pos - from))
-      slidesRef.current.forEach((el, i) => {
-        if (!el) return
-        if (i === to && to !== from) {
-          el.style.zIndex = '2'
-          el.style.opacity = t.toFixed(3)
-          el.style.transform = `translateY(${((1 - t) * 18).toFixed(2)}px) scale(${(0.988 + 0.012 * t).toFixed(4)})`
-          // Labels and captions sit outside the photo, so they would read as doubled
-          // text mid-dissolve: clear the old one out before the new one arrives.
-          el.style.setProperty('--text-op', clamp01((t - 0.55) / 0.45).toFixed(3))
-        } else if (i === from) {
-          el.style.zIndex = '1'
-          el.style.opacity = '1'
-          el.style.transform = 'none'
-          el.style.setProperty('--text-op', clamp01((0.45 - t) / 0.45).toFixed(3))
-        } else {
-          el.style.zIndex = '0'
-          el.style.opacity = '0'
-          el.style.transform = 'none'
-          el.style.setProperty('--text-op', '0')
-        }
-        el.style.pointerEvents = Math.round(pos) === i ? 'auto' : 'none'
-      })
-      namesRef.current.forEach((el, i) => {
-        if (!el) return
-        el.style.opacity = (0.12 + 0.88 * ease(1 - clamp01(Math.abs(i - pos)))).toFixed(3)
-      })
-      setActive(Math.round(pos))
-    }
-
-    // Ease towards the scroll position rather than snapping to it, so a fast
-    // flick catches up over a few frames instead of cutting between pairs.
-    const run = () => {
-      frame = 0
-      const diff = target - current
-      if (Math.abs(diff) < 0.0008 || !flow) {
-        current = target
-        paint(current)
-        return
-      }
-      current += diff * 0.18
-      paint(current)
-      frame = requestAnimationFrame(run)
-    }
 
     const update = () => {
+      frame = 0
       if (!pinned()) {
-        current = null
-        stage.style.setProperty('--pos', '0')
-        clearInline()
+        stage.style.setProperty('--index', '0')
+        root.classList.remove('rec-snapping')
         setActive(0)
         return
       }
-      target = readTarget()
-      flow = !reduced()
-      if (current === null) {
-        current = target
-        paint(current)
-        return
-      }
-      if (!flow) {
-        current = target
-        paint(current)
-        return
-      }
-      if (!frame) frame = requestAnimationFrame(run)
+      const rect = section.getBoundingClientRect()
+      const step = (rect.height - window.innerHeight) / last
+      const index = step > 0
+        ? Math.min(Math.max(Math.round(-rect.top / step), 0), last)
+        : 0
+      stage.style.setProperty('--index', String(index))
+      setActive(index)
+
+      // Snap only while between the first and last pair, with a few pixels of
+      // release at each end — otherwise the outermost snap point keeps pulling the
+      // page back and there is no way to scroll out of the section.
+      const travelled = -rect.top
+      const travel = rect.height - window.innerHeight
+      const owns = travelled > 6 && travelled < travel - 6
+      root.classList.toggle('rec-snapping', owns && canSnap())
+    }
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
     }
 
     update()
-    window.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
     return () => {
       if (frame) cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      root.classList.remove('rec-snapping')
     }
   }, [])
 
@@ -241,6 +170,14 @@ export default function Recognition() {
       ref={sectionRef}
       style={{ '--slides': groups.length }}
     >
+      {groups.map((group, i) => (
+        <span
+          key={`snap-${group.name}`}
+          className="rec-snap"
+          style={{ top: `calc(${i} * (100% - 100vh) / ${groups.length - 1})` }}
+          aria-hidden="true"
+        />
+      ))}
       <div className="rec-sticky">
         <div className="container rec-container">
           <div className="section-header rec-header">
@@ -252,7 +189,6 @@ export default function Recognition() {
             {groups.map((group, i) => (
               <div
                 key={group.name}
-                ref={el => { slidesRef.current[i] = el }}
                 className={`rec-slide${i === active ? ' is-active' : ''}`}
                 aria-hidden={i === active ? undefined : true}
               >
@@ -281,7 +217,6 @@ export default function Recognition() {
                 {groups.map((group, i) => (
                   <span
                     key={group.name}
-                    ref={el => { namesRef.current[i] = el }}
                     className={`rec-name${i === active ? ' is-active' : ''}`}
                   >
                     {group.name}

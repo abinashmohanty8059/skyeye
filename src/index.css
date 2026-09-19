@@ -2032,8 +2032,30 @@ img { display: block; max-width: 100%; }
    SECTION: RECOGNITION (pinned scroll sequence)
    ============================================ */
 .section-recognition {
+  position: relative;
   background-color: var(--color-surface-container-low);
   border-bottom: 1px solid var(--color-surface-container-highest);
+}
+
+/* One snap point per pair. They only bite while the section is on screen —
+   Recognition.jsx adds .rec-snapping to <html> then, and drops it after. */
+.rec-snap {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.rec-snapping {
+  scroll-snap-type: y mandatory;
+}
+
+@media (min-width: 900px) {
+  .rec-snapping .rec-snap {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
 }
 
 .rec-sticky {
@@ -2052,7 +2074,7 @@ img { display: block; max-width: 100%; }
 }
 
 .rec-stage {
-  --pos: 0;
+  --index: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-2xl);
@@ -2117,8 +2139,10 @@ img { display: block; max-width: 100%; }
 
 /* Pinned, scroll-driven behaviour on wide screens */
 @media (min-width: 900px) {
+  /* One short scroll step per pair: a single wheel notch clears the midpoint, so
+     it lands on the next snap point instead of falling back to the current one. */
   .section-recognition {
-    height: calc(var(--slides, 2) * 92vh);
+    height: calc(100vh + (var(--slides, 2) - 1) * 170px);
   }
 
   .rec-sticky {
@@ -2142,24 +2166,20 @@ img { display: block; max-width: 100%; }
     min-height: min(54vh, 480px);
   }
 
-  /* Opacity and transform are written per frame from the scroll position
-     (see Recognition.jsx) — no CSS transition here, or it would lag the wheel. */
+  /* One pair visible at a time, switched outright — no fade, so two pairs are
+     never on screen together. */
   .rec-slide {
     position: absolute;
     inset: 0;
     grid-template-columns: minmax(0, 1fr) minmax(190px, 0.78fr) minmax(0, 1fr);
     gap: var(--space-lg);
     align-items: center;
-    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    will-change: opacity, transform;
-  }
-
-  .rec-slide:first-child {
-    opacity: 1;
   }
 
   .rec-slide.is-active {
+    visibility: visible;
     pointer-events: auto;
   }
 
@@ -2179,12 +2199,10 @@ img { display: block; max-width: 100%; }
     text-align: center;
     max-width: none;
     padding: 0 var(--space-md);
-    opacity: var(--text-op, 1);
   }
 
   .rec-frame-label {
     text-align: center;
-    opacity: var(--text-op, 1);
   }
 
   /* Centre column: the name list scrolls continuously with the page */
@@ -2212,8 +2230,7 @@ img { display: block; max-width: 100%; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform: translateY(calc(var(--pos, 0) * var(--item-h) * -1));
-    will-change: transform;
+    transform: translateY(calc(var(--index, 0) * var(--item-h) * -1));
   }
 
   .rec-name {
@@ -2230,7 +2247,10 @@ img { display: block; max-width: 100%; }
     text-transform: uppercase;
     color: var(--color-primary);
     opacity: 0.12;
-    will-change: opacity;
+  }
+
+  .rec-name.is-active {
+    opacity: 1;
   }
 }
 
