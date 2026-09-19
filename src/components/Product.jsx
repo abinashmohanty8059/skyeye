@@ -11,7 +11,7 @@ const specs = [
 
 export default function Product() {
   return (
-    <section className="section-product">
+    <section className="section-product" id="products">
       <div className="container py-2xl">
         <div className="section-header">
           <span className="section-label">04 / PRODUCT</span>
@@ -57,7 +57,7 @@ export default function Product() {
             </div>
 
             <div>
-              <a className="btn-primary" href="#" style={{ padding: '12px 16px', width: '100%', maxWidth: '360px' }}>
+              <a className="btn-primary" href="#contact" style={{ padding: '12px 16px', width: '100%', maxWidth: '360px' }}>
                 [ View Product Specifications → ]
               </a>
             </div>

@@ -61,7 +61,7 @@ export default function Solutions() {
   const current = solutions[active]
 
   return (
-    <section className="section-solutions">
+    <section className="section-solutions" id="solutions">
       <div className="container py-2xl">
         <div className="section-header">
           <span className="section-label">03 / APPLICATIONS</span>

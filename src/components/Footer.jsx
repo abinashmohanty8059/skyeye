@@ -31,20 +31,20 @@ export default function Footer() {
           <div className="footer-links">
             <div className="footer-links-group">
               <span className="footer-links-heading">ARCHITECTURES</span>
-              <a className="footer-link" href="#">Technology</a>
-              <a className="footer-link" href="#">Solutions</a>
-              <a className="footer-link" href="#">Products</a>
+              <a className="footer-link" href="#technology">Technology</a>
+              <a className="footer-link" href="#solutions">Solutions</a>
+              <a className="footer-link" href="#products">Products</a>
             </div>
             <div className="footer-links-group">
               <span className="footer-links-heading">DIVISION LABS</span>
-              <a className="footer-link" href="#">R&D</a>
-              <a className="footer-link" href="#">Flight Academy</a>
-              <a className="footer-link" href="#">Corporate Profile</a>
+              <a className="footer-link" href="#rnd">R&D</a>
+              <a className="footer-link" href="#training">Flight Academy</a>
+              <a className="footer-link" href="#about">Corporate Profile</a>
             </div>
             <div className="footer-links-group">
               <span className="footer-links-heading">CONNECT</span>
-              <a className="footer-link" href="#">Careers</a>
-              <a className="footer-link" href="#">Talk to us</a>
+              <a className="footer-link" href="#careers">Careers</a>
+              <a className="footer-link" href="#contact">Talk to us</a>
               <div style={{ paddingTop: 'var(--space-xs)', display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
                 <a className="footer-social-link" href="#">LinkedIn</a>
                 <a className="footer-social-link" href="#">Instagram</a>

@@ -24,7 +24,7 @@ const categories = [
 
 export default function WhatWeDo() {
   return (
-    <section className="section-what">
+    <section className="section-what" id="about">
       <div className="container section-what-inner">
         {/* Header */}
         <div className="section-header">

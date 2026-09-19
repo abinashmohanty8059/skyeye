@@ -67,7 +67,7 @@ export default function Technology() {
   }
 
   return (
-    <section className="section-tech">
+    <section className="section-tech" id="technology">
       <div className="container py-2xl">
         <div className="section-header">
           <span className="section-label">02 / TECHNOLOGY</span>

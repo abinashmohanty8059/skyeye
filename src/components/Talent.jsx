@@ -10,7 +10,7 @@ const badges = [
 
 export default function Talent() {
   return (
-    <section className="section-talent">
+    <section className="section-talent" id="careers">
       <div className="talent-accent" />
       <div className="container py-2xl">
         <div style={{ maxWidth: '64rem' }}>
@@ -27,7 +27,7 @@ export default function Talent() {
           </div>
 
           <div style={{ paddingTop: 'var(--space-md)' }}>
-            <a className="btn-primary" href="#" style={{ padding: '12px 16px' }}>
+            <a className="btn-primary" href="#contact" style={{ padding: '12px 16px' }}>
               [ View Open Opportunities → ]
             </a>
           </div>

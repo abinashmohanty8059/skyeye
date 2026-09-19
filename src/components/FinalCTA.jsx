@@ -2,7 +2,7 @@ const CTA_IMG = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBDbwDDLYCTS
 
 export default function FinalCTA() {
   return (
-    <section className="section-cta">
+    <section className="section-cta" id="contact">
       <div className="container py-2xl">
         <div className="cta-grid">
           {/* Left */}
@@ -17,7 +17,7 @@ export default function FinalCTA() {
             <div style={{ paddingTop: 'var(--space-md)' }}>
               <a
                 className="btn-primary"
-                href="#"
+                href="#contact"
                 style={{
                   padding: '16px var(--space-lg)',
                   letterSpacing: '0.08em',

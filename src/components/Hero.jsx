@@ -24,8 +24,8 @@ export default function Hero() {
 
             {/* CTAs */}
             <div className="hero-ctas">
-              <a className="btn-primary" href="#">[ Explore Technology ]</a>
-              <a className="btn-outline" href="#">[ Talk to Us ]</a>
+              <a className="btn-primary" href="#technology">[ Explore Technology ]</a>
+              <a className="btn-outline" href="#contact">[ Talk to Us ]</a>
             </div>
 
             {/* Quick Metrics */}

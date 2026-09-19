@@ -5,7 +5,7 @@ export default function Header() {
     <header className="header">
       <div className="container header-inner">
         {/* Logo */}
-        <a className="logo" href="#">
+        <a className="logo" href="#top" aria-label="Sky Eye Technology, back to top">
           <img className="logo-mark" src={logoMark} alt="Sky Eye Technology" />
           <div className="logo-text">
             <span className="logo-brand">SKY EYE</span>
@@ -15,17 +15,17 @@ export default function Header() {
 
         {/* Nav */}
         <nav className="nav">
-          <a href="#">Technology</a>
-          <a href="#">Solutions</a>
-          <a href="#">Products</a>
-          <a href="#">R&D</a>
-          <a href="#">Training</a>
-          <a href="#">About</a>
+          <a href="#technology">Technology</a>
+          <a href="#solutions">Solutions</a>
+          <a href="#products">Products</a>
+          <a href="#rnd">R&D</a>
+          <a href="#training">Training</a>
+          <a href="#about">About</a>
         </nav>
 
         {/* Actions */}
         <div className="header-actions">
-          <a className="btn-primary" href="#" style={{ display: 'inline-flex' }}>
+          <a className="btn-primary" href="#contact" style={{ display: 'inline-flex' }}>
             [ Talk to us ]
           </a>
           <div className="avatar">

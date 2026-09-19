@@ -2553,8 +2553,8 @@ img { display: block; max-width: 100%; }
   .vh-coords { display: inline; }
 }
 
-/* The hero below this one is the anchor target; clear the fixed header. */
-.section-hero {
+/* Anchor targets sit clear of the fixed header. */
+section[id] {
   scroll-margin-top: 4rem;
 }
 

@@ -8,7 +8,7 @@ const courses = [
 
 export default function Learning() {
   return (
-    <section className="section-learning">
+    <section className="section-learning" id="training">
       <div className="container py-2xl">
         <div className="learning-grid">
           {/* Left */}

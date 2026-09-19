@@ -123,7 +123,7 @@ export default function VideoHero() {
   }
 
   return (
-    <section className="video-hero" ref={sectionRef}>
+    <section className="video-hero" id="top" ref={sectionRef}>
       <div className="vh-media" ref={mediaRef}>
         <video
           ref={videoRef}
@@ -158,8 +158,8 @@ export default function VideoHero() {
             operations — designed, built and flown in India.
           </p>
           <div className="vh-ctas">
-            <a className="vh-btn vh-btn-solid" href="#overview">[ Explore Technology ]</a>
-            <a className="vh-btn vh-btn-ghost" href="#">[ Talk to Us ]</a>
+            <a className="vh-btn vh-btn-solid" href="#technology">[ Explore Technology ]</a>
+            <a className="vh-btn vh-btn-ghost" href="#contact">[ Talk to Us ]</a>
           </div>
         </div>
       </div>

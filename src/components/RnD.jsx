@@ -35,7 +35,7 @@ const projects = [
 
 export default function RnD() {
   return (
-    <section className="section-rnd">
+    <section className="section-rnd" id="rnd">
       <div className="container py-2xl">
         <div className="section-header">
           <span className="section-label">06 / R&D</span>
