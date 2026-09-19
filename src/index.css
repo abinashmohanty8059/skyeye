@@ -301,6 +301,14 @@ img {
   gap: var(--space-md);
 }
 
+/* On narrow screens the call to action ran over the wordmark, so it drops out
+   there — the same button sits in the engagement section and the footer. */
+@media (max-width: 900px) {
+  /* Two selectors, because .btn-primary sets display later in this file and
+     would otherwise win the cascade on equal specificity. */
+  .header-actions .header-cta { display: none; }
+}
+
 .btn-primary {
   display: inline-flex;
   align-items: center;

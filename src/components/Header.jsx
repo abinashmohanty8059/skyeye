@@ -25,7 +25,7 @@ export default function Header() {
 
         {/* Actions */}
         <div className="header-actions">
-          <a className="btn-primary" href="#contact" style={{ display: 'inline-flex' }}>
+          <a className="btn-primary header-cta" href="#contact">
             [ Talk to us ]
           </a>
           <div className="avatar">
