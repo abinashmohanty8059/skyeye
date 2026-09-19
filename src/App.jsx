@@ -1,6 +1,7 @@
 import Header from './components/Header'
 import VideoHero from './components/VideoHero'
 import Hero from './components/Hero'
+import ImageMorphGallery from './components/ImageMorphGallery'
 import WhatWeDo from './components/WhatWeDo'
 import VideoStrip from './components/VideoStrip'
 import Technology from './components/Technology'
@@ -23,6 +24,7 @@ function App() {
       <main className="page-main">
         <VideoHero />
         <Hero />
+        <ImageMorphGallery />
         <WhatWeDo />
         <VideoStrip />
         <Technology />
