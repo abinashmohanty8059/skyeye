@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import solMapping from '../assets/sol-mapping.jpg'
+import useIsMobile from '../hooks/useIsMobile'
 
 const solutions = {
   agri: {
@@ -57,6 +58,7 @@ const solutions = {
 const keys = Object.keys(solutions)
 
 export default function Solutions() {
+  const isMobile = useIsMobile()
   const [active, setActive] = useState('agri')
   const current = solutions[active]
 
@@ -98,7 +100,7 @@ export default function Solutions() {
           {/* Right Preview */}
           <div className="sol-preview">
             <div className="sol-preview-img-wrap">
-              {current.video ? (
+              {current.video && !isMobile ? (
                 // Keyed on the profile so switching tabs remounts and restarts it.
                 <video
                   key={active}

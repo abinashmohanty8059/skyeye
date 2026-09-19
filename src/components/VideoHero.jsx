@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import heroPoster from '../assets/hero-video-poster.jpg'
+import useIsMobile from '../hooks/useIsMobile'
 
 const VIDEO_SRC = 'https://ik.imagekit.io/tm5te9cjl/skyeye/16853015_3840_2160_30fps.mp4'
 
@@ -16,6 +17,7 @@ export default function VideoHero() {
   const bodyRef = useRef(null)
   const cueRef = useRef(null)
   const pausedByUser = useRef(false)
+  const isMobile = useIsMobile()
   const [motion] = useState(() => !wantsReducedMotion())
   const [playing, setPlaying] = useState(motion)
 
@@ -125,6 +127,9 @@ export default function VideoHero() {
   return (
     <section className="video-hero" id="top" ref={sectionRef}>
       <div className="vh-media" ref={mediaRef}>
+        {isMobile ? (
+          <img src={heroPoster} alt="Quadcopter hovering against an open sky, seen from below" />
+        ) : (
         <video
           ref={videoRef}
           src={VIDEO_SRC}
@@ -138,6 +143,7 @@ export default function VideoHero() {
           onPause={() => setPlaying(false)}
           aria-label="Quadcopter hovering against an open sky, seen from below"
         />
+        )}
       </div>
       {/* Blends the white header into the footage; stays put while the video parallaxes */}
       <div className="vh-topfade" />
@@ -172,6 +178,7 @@ export default function VideoHero() {
             arrow_downward
           </span>
         </a>
+        {!isMobile && (
         <button
           className="vh-toggle"
           type="button"
@@ -183,6 +190,7 @@ export default function VideoHero() {
             {playing ? 'pause' : 'play_arrow'}
           </span>
         </button>
+        )}
       </div>
     </section>
   )

@@ -3,6 +3,7 @@ import tech1 from '../assets/tech-1.jpg'
 import tech2 from '../assets/tech-2.jpg'
 import tech3 from '../assets/tech-3.jpg'
 import tech4 from '../assets/tech-4.jpg'
+import useIsMobile from '../hooks/useIsMobile'
 
 // ?tr=w-960 is an ImageKit video transform: the sources are 4K and tens of
 // megabytes each, which is not something to hand a viewer for a hover preview.
@@ -48,6 +49,7 @@ const techItems = [
 ]
 
 export default function Technology() {
+  const isMobile = useIsMobile()
   const videosRef = useRef([])
 
   const start = i => {
@@ -86,6 +88,9 @@ export default function Technology() {
               onMouseLeave={() => stop(i)}
             >
               <div className="tech-media">
+                {isMobile ? (
+                  <img src={item.poster} alt={item.alt} loading="lazy" />
+                ) : (
                 <video
                   ref={el => { videosRef.current[i] = el }}
                   src={item.video}
@@ -96,7 +101,8 @@ export default function Technology() {
                   preload="none"
                   aria-label={item.alt}
                 />
-                <span className="tech-media-cue">Hover to play</span>
+                )}
+                {!isMobile && <span className="tech-media-cue">Hover to play</span>}
               </div>
 
               <div className="tech-body">

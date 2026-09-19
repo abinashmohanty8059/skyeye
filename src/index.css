@@ -991,7 +991,8 @@ img {
   border: 1px solid var(--color-surface-container-highest);
 }
 
-.tech-media video {
+.tech-media video,
+.tech-media img {
   display: block;
   width: 100%;
   height: 100%;
@@ -1104,7 +1105,8 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tech-media video {
+  .tech-media video,
+  .tech-media img {
     transition: filter 120ms ease;
   }
 
@@ -2603,7 +2605,8 @@ img {
   will-change: transform;
 }
 
-.vh-media video {
+.vh-media video,
+.vh-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;

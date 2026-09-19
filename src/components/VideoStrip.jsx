@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import videoPoster from '../assets/video-poster.jpg'
+import useIsMobile from '../hooks/useIsMobile'
 
 const VIDEO_SRC = 'https://ik.imagekit.io/tm5te9cjl/skyeye/13623219_3840_2160_30fps.mp4'
 
@@ -7,6 +8,7 @@ const wantsReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 export default function VideoStrip() {
+  const isMobile = useIsMobile()
   const videoRef = useRef(null)
   const pausedByUser = useRef(false)
   // Decided once, at first render: pausing a video that has not started yet fires
@@ -59,6 +61,9 @@ export default function VideoStrip() {
         <div className="video-strip-frame">
           {/* Main cinematic flight footage */}
           <div className="video-strip-canvas">
+            {isMobile ? (
+              <img src={videoPoster} alt="Monochrome aerial drone footage over a main road through a residential area" />
+            ) : (
             <video
               ref={videoRef}
               src={VIDEO_SRC}
@@ -72,6 +77,7 @@ export default function VideoStrip() {
               onPause={() => setPlaying(false)}
               aria-label="Monochrome aerial drone footage tracking traffic along a main road through a residential area"
             />
+            )}
             <div className="video-strip-gradient" />
 
             <div className="video-strip-overlay">
@@ -79,6 +85,7 @@ export default function VideoStrip() {
                 <span className="vs-badge">FLIGHT CAM 04 // ACTIVE RUN</span>
                 <p className="vs-title">HIGH-ENDURANCE FIELD RECONNAISSANCE</p>
               </div>
+              {!isMobile && (
               <button
                 className="vs-play-btn"
                 type="button"
@@ -90,6 +97,7 @@ export default function VideoStrip() {
                   {playing ? 'pause' : 'play_arrow'}
                 </span>
               </button>
+              )}
             </div>
           </div>
 
