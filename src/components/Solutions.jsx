@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import solMapping from '../assets/sol-mapping.jpg'
 
 const solutions = {
   agri: {
@@ -23,7 +24,9 @@ const solutions = {
     panelTitle: 'APPLICATION PROFILE: MAPPING & SURVEYING',
     coords: 'LAT: 20.4625° N · LON: 85.8830° E',
     desc: 'LiDAR and high-resolution photogrammetry capture delivering dense 3D point clouds and topographical digital surface models.',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCcvKrRg59mCB4A3SltEZFOrwwfM_PW4PHnLCsgeNrbILBS59gG-tuw0v7_nEkZ7QFcIqJzN4nvk1a5M--3tM6MypmMLhoZXSLDKgLPWcp1MLqgxLAfLSzkTU2SILId2FhJVe-hpMrBdYVKTngWuuwwGvmZJWHPoFXMgOGuSqJq2NTRRSs_-Lqi4IMbo6VIll-655qHF05eKyJqNz88laLhKo1sy087PAnAwtDySHb579fiHDluwUpa'
+    video: 'https://ik.imagekit.io/x795sinml/skye/15020300_3840_2160_25fps.mp4?tr=w-960',
+    img: solMapping,
+    alt: 'Aerial survey pass over a built-up area'
   },
   public: {
     app: 'APP // 04',
@@ -95,7 +98,22 @@ export default function Solutions() {
           {/* Right Preview */}
           <div className="sol-preview">
             <div className="sol-preview-img-wrap">
-              <img src={current.img} alt={current.panelTitle} />
+              {current.video ? (
+                // Keyed on the profile so switching tabs remounts and restarts it.
+                <video
+                  key={active}
+                  src={current.video}
+                  poster={current.img}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label={current.alt}
+                />
+              ) : (
+                <img src={current.img} alt={current.panelTitle} />
+              )}
               <div className="sol-preview-badge">TELEMETRY: STABLE</div>
             </div>
 

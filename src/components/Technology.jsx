@@ -4,9 +4,9 @@ import tech2 from '../assets/tech-2.jpg'
 import tech3 from '../assets/tech-3.jpg'
 import tech4 from '../assets/tech-4.jpg'
 
-// ?tr=w-640 is an ImageKit video transform: the sources are 4K, 34-65 MB each,
-// which is not something to hand a viewer for a thumbnail-sized hover preview.
-const clip = name => `https://ik.imagekit.io/x795sinml/skye/${name}.mp4?tr=w-640`
+// ?tr=w-960 is an ImageKit video transform: the sources are 4K and tens of
+// megabytes each, which is not something to hand a viewer for a hover preview.
+const clip = name => `https://ik.imagekit.io/x795sinml/skye/${name}.mp4?tr=w-960`
 
 const techItems = [
   {
@@ -23,18 +23,18 @@ const techItems = [
     title: 'ROBOTICS',
     desc: 'Robotic systems designed around practical operational challenges, including high-heat corridors and confined spaces.',
     spec: 'SPEC: IP67 FIELD CERTIFIED',
-    video: clip('15020300_3840_2160_25fps'),
+    video: clip('7609195-uhd_3840_2160_25fps'),
     poster: tech2,
-    alt: 'Aerial survey pass over a built-up area'
+    alt: 'Close pass across a populated circuit board'
   },
   {
     num: '03',
     title: 'AI & INTELLIGENCE',
     desc: 'Artificial intelligence and emerging technologies applied to mission computers for target recognition and terrain mapping.',
     spec: 'EDGE LATENCY: <14MS',
-    video: clip('7609195-uhd_3840_2160_25fps'),
+    video: clip('15254965_1920_1080_24fps'),
     poster: tech3,
-    alt: 'Close pass across a populated circuit board'
+    alt: 'Processor at the centre of an animated circuit trace network'
   },
   {
     num: '04',
@@ -79,36 +79,36 @@ export default function Technology() {
 
         <div className="tech-list">
           {techItems.map((item, i) => (
-            <div
+            <article
               key={item.num}
               className="tech-item"
               onMouseEnter={() => start(i)}
               onMouseLeave={() => stop(i)}
             >
-              <div className="tech-left">
+              <div className="tech-media">
+                <video
+                  ref={el => { videosRef.current[i] = el }}
+                  src={item.video}
+                  poster={item.poster}
+                  muted
+                  loop
+                  playsInline
+                  preload="none"
+                  aria-label={item.alt}
+                />
+                <span className="tech-media-cue">Hover to play</span>
+              </div>
+
+              <div className="tech-body">
                 <span className="tech-num">{item.num}</span>
-                <div className="tech-thumb">
-                  <video
-                    ref={el => { videosRef.current[i] = el }}
-                    src={item.video}
-                    poster={item.poster}
-                    muted
-                    loop
-                    playsInline
-                    preload="none"
-                    aria-label={item.alt}
-                  />
-                </div>
-                <div>
-                  <h3 className="tech-h3">{item.title}</h3>
-                  <p className="tech-sub">{item.desc}</p>
+                <h3 className="tech-h3">{item.title}</h3>
+                <p className="tech-sub">{item.desc}</p>
+                <div className="tech-meta">
+                  <span className="tech-spec">{item.spec}</span>
+                  <span className="tech-arrow">→</span>
                 </div>
               </div>
-              <div className="tech-right">
-                <span className="tech-spec">{item.spec}</span>
-                <span className="tech-arrow">→</span>
-              </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
